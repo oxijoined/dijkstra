@@ -24,7 +24,7 @@ class GraphGui:
         self.root.config(menu=menu)
 
         filemenu = tk.Menu(menu)
-        menu.add_cascade(label="File", menu=filemenu)
+        menu.add_cascade(label="Файл", menu=filemenu)
         filemenu.add_command(label="Загрузить граф", command=self.load_graph)
         filemenu.add_command(label="Сохранить граф", command=self.save_graph)
         filemenu.add_command(label="Добавить вершину", command=self.add_vertex)
@@ -57,13 +57,13 @@ class GraphGui:
             # Добавляем кнопку, которая добавляет ребро в граф и заново рисует его
             tk.Button(
                 dialog,
-                text="Add edge",
+                text="Добавить ребро",
                 command=lambda: self._add_edge_callback(
                     start_vertex, end, weight, dialog
                 ),
             ).grid(row=2, column=0, columnspan=2)
 
-    def _add_edge_callback(self, start_vertex, end_entry, weight_entry, dialog):
+    def _add_edge_callback(self, start_vertex, end_entry, weight_entry, dialog=None):
         end_vertex = end_entry.get()
         weight = weight_entry.get()
 
@@ -71,7 +71,8 @@ class GraphGui:
             if end_vertex in self.graph.get_vertices():
                 self.graph.add_edge(start_vertex, end_vertex, int(weight))
                 self.draw_graph()
-                dialog.destroy()
+                if dialog is not None:
+                    dialog.destroy()
             else:
                 messagebox.showerror("Ошибка", "Конечная вершина не существует.")
         else:
