@@ -80,7 +80,7 @@ class GraphGui:
 
     def on_canvas_click(self, event):
         # Запрашиваем имя вершины у пользователя
-        name = simpledialog.askstring("Input", "Enter vertex name:")
+        name = simpledialog.askstring("Input", "Введите имя вершины:")
         if name is not None:
             self.graph.add_vertex(name)
             self.vertices_coordinates[name] = (event.x, event.y)
@@ -104,11 +104,14 @@ class GraphGui:
             messagebox.showinfo("Загрузка", "Граф успешно загружен.")
 
     def get_vertex_at(self, x, y):
-        # Возвращает вершину, расположенную в координатах (x, y), или None
-        for vertex, (vx, vy) in self.vertices_coordinates.items():
-            if abs(vx - x) < 20 and abs(vy - y) < 20:
-                return vertex
-        return None
+        return next(
+            (
+                vertex
+                for vertex, (vx, vy) in self.vertices_coordinates.items()
+                if abs(vx - x) < 20 and abs(vy - y) < 20
+            ),
+            None,
+        )
 
     def add_vertex(self):
         # Добавление вершины через меню
@@ -138,14 +141,17 @@ class GraphGui:
         # Добавляем кнопку, которая добавляет ребро в граф и заново рисует его
         tk.Button(
             dialog,
-            text="Add edge",
+            text="Добавить ребро",
             command=lambda: self._add_edge_callback(start, end, weight),
         ).grid(row=3, column=0, columnspan=2)
 
     def run_dijkstra(self):
         start = simpledialog.askstring("Вход", "Введите начальную вершину:")
         if start is not None:
-            self.draw_dijkstra(start)
+            try:
+                self.draw_dijkstra(start)
+            except Exception as ex:
+                messagebox.showerror("Произола ошибка",f"Вершины '{start}' не существует!")
 
     def draw_graph(self):
         # Очищаем холст
